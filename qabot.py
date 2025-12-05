@@ -75,3 +75,13 @@ def watsonx_embedding():
     )
 
     return watsonx_embedding
+
+## Vector db
+def vector_database(chunks):
+    """ Create vector db """
+
+    embedding_model = watsonx_embedding()
+    # documents=docs, embedding=GPT4AllEmbeddings()
+    vectordb = Chroma.from_documents(chunks, embedding_model)
+
+    return vectordb
