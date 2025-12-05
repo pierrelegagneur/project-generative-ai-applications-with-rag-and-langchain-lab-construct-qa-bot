@@ -50,7 +50,7 @@ def text_splitter(data):
     """ Splits text into chunks"""
 
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=.1000,
+        chunk_size=1000,
         chunk_overlap=50,
         length_function=len,
     )
@@ -90,7 +90,7 @@ def vector_database(chunks):
 def retriever(file):
     """ Fetch document segments based on queries """
 
-    splits = document_loader(file4)
+    splits = document_loader(file)
     chunks = text_splitter(splits)
     vectordb = vector_database(chunks)
     retriever = vectordb.as_retriever()
@@ -107,7 +107,7 @@ def retriever_qa(file, query):
                                     chain_type='stuff', 
                                     retriever=retriever_obj, 
                                     return_source_documents=False)
-    response = qa.invoke(......)
+    response = qa.invoke(query)
 
     return response['result']
 
@@ -121,11 +121,11 @@ rag_application = gr.Interface(
         gr.Textbox(label="Input Query", lines=2, placeholder="Type your question here...")
     ],
     outputs=gr.Textbox(label='Output'),
-    
+
     title='QA Chatbot',
     description="Upload a PDF document and ask any question. The chatbot will try to answer using the provided document."
 )
 
 # Launch the app
-rag_application.launch(server_name="127.0.0.1", server_port= 7860)
+rag_application.launch(server_name="127.0.0.1", server_port=7860)
     
