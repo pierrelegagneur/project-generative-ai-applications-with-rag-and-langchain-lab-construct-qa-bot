@@ -60,7 +60,7 @@ def text_splitter(data):
 
 ## Embedding model
 def watsonx_embedding():
-    """ Create embeddings """
+    """ Embed documents """
 
     embed_params = {
         EmbedTextParamsMetaNames.TRUNCATE_INPUT_TOKENS: 3,
@@ -78,10 +78,36 @@ def watsonx_embedding():
 
 ## Vector db
 def vector_database(chunks):
-    """ Create vector db """
+    """ Create and configure vector databases to store embeddings """
 
     embedding_model = watsonx_embedding()
     # documents=docs, embedding=GPT4AllEmbeddings()
     vectordb = Chroma.from_documents(chunks, embedding_model)
 
     return vectordb
+
+## Retriever
+def retriever(file):
+    """ Fetch document segments based on queries """
+
+    splits = document_loader(file4)
+    chunks = text_splitter(splits)
+    vectordb = vector_database(chunks)
+    retriever = vectordb.as_retriever()
+
+    return retriever
+
+## QA Chain
+def retriever_qa(file, query):
+    """ Define a question-answering chain """
+
+    llm = get_llm()
+    retriever_obj = retriever(file)
+    qa = RetrievalQA.from_chain_type(llm=llm, 
+                                    chain_type='stuff', 
+                                    retriever=retriever_obj, 
+                                    return_source_documents=False)
+    response = qa.invoke(......)
+
+    return response['result']
+    
