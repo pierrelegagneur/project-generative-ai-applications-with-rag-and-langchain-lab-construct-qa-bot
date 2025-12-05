@@ -57,3 +57,21 @@ def text_splitter(data):
 
     chunks = text_splitter.split_documents(data)
     return chunks
+
+## Embedding model
+def watsonx_embedding():
+    """ Create embeddings """
+
+    embed_params = {
+        EmbedTextParamsMetaNames.TRUNCATE_INPUT_TOKENS: 3,
+        EmbedTextParamsMetaNames.RETURN_OPTIONS: {"input_text": True},
+    }
+
+    watsonx_embedding = WatsonxEmbeddings(
+        model_id='ibm/slate-125m-english-rtrvr-v2',
+        url="https://us-south.ml.cloud.ibm.com",
+        project_id='skills-network',
+        params=embed_params,
+    )
+
+    return watsonx_embedding
